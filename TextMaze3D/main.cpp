@@ -38,21 +38,27 @@
 using namespace std;
 
 struct Player {
-	int x, y;   // Location in the maze
-	int dir;    // direction player is facing (North, South, East or West)
+	_int8 x, y;   // Location in the maze
+	_int8 dir;    // direction player is facing (North, South, East or West)
 };
 
 struct Maze {
-	int n, s, e, w;   // The four exits from each room, set to 1 if there is an exit in that direction, 0 if not.
-	int isEntrance;   // is this the entrance to the maze (not used yet, I may change this to an external variable)
-	int isExit;       // is this the exit to the maze (not used yet, I may change this to an external variable)
-	int visited;      // This is used when the maze is generated, and whether the player has been here when drawing the map
+	bool n, s, e, w;   // The four exits from each room, set to 1 if there is an exit in that direction, 0 if not.
+	bool isEntrance;   // is this the entrance to the maze (not used yet, I may change this to an external variable)
+	bool isExit;       // is this the exit to the maze (not used yet, I may change this to an external variable)
+	bool visited;      // This is used when the maze is generated, and whether the player has been here when drawing the map
 };
 
 void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player);
 void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player);
 void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player);
 
+/// <summary>
+/// The main application
+/// </summary>
+/// <param name="arc"></param>
+/// <param name="argv"></param>
+/// <returns></returns>
 int main(int arc, char** argv)
 {
 	unsigned char command = 0;
@@ -177,90 +183,117 @@ int main(int arc, char** argv)
 /// <param name="player"></param>
 void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 {
-	int wall = 0;
-	int e1 = 0, e2 = 1;
-	int exit[6] = { 0, 0, 0, 0, 0, 0 };
-	int posy = player.y;
-	int posx = player.x;
+	_int8 wall = 0;
+	_int8 e1 = 0, e2 = 1;
+	_int8 exit[6] = { 0, 0, 0, 0, 0, 0 };
+	_int8 posy = player.y;
+	_int8 posx = player.x;
 
 	// Any part of the hall that we can see, will be marked as "visited" for map drawing purposes
 	// after all, if we can see the hall, than obviously we know the exits off of it without
 	// having to actually enter those areas.  This will only mark halls we are actually looking
 	// at as seen though.  To have them appear on the map, you have to turn around and look down
 	// that hall, which makes perfect sense.
-	maze[player.y][player.x].visited = 1;  // Mark current location visited
+	maze[player.y][player.x].visited = true;  // Mark current location visited
 
 	// TODO: The code below looks repetative, I need to improve it.
 
-	switch (player.dir) {
-	case NORTH:
-		exit[e1] = maze[posy][posx].w;
-		exit[e2] = maze[posy][posx].e;
-		while (maze[posy][posx].n && wall < 3) {
-			posy--;
-			if (posy >= 0) {
-				wall++;
-				if (wall < 3) {
-					maze[posy][posx].visited = 1; // Mark location as visited as we can see it, so we know the hall layout
-					e1 += 2;
-					e2 += 2;
-					exit[e1] = maze[posy][posx].w;
-					exit[e2] = maze[posy][posx].e;
+	switch (player.dir) 
+	{
+		case NORTH:
+			exit[e1] = maze[posy][posx].w;
+			exit[e2] = maze[posy][posx].e;
+
+			while (maze[posy][posx].n && wall < 3) 
+			{
+				posy--;
+
+				if (posy >= 0) 
+				{
+					wall++;
+
+					if (wall < 3) 
+					{
+						maze[posy][posx].visited = true; // Mark location as visited as we can see it, so we know the hall layout
+						e1 += 2;
+						e2 += 2;
+						exit[e1] = maze[posy][posx].w;
+						exit[e2] = maze[posy][posx].e;
+					}
 				}
 			}
-		}
-		break;
-	case EAST:
-		exit[e1] = maze[posy][posx].n;
-		exit[e2] = maze[posy][posx].s;
-		while (maze[posy][posx].e && wall < 3) {
-			posx++;
-			if (posx < MAZE_SIZE_X) {
-				wall++;
-				if (wall < 3) {
-					maze[posy][posx].visited = 1; // Mark location as visited as we can see it, so we know the hall layout
-					e1 += 2;
-					e2 += 2;
-					exit[e1] = maze[posy][posx].n;
-					exit[e2] = maze[posy][posx].s;
+			break;
+
+		case EAST:
+			exit[e1] = maze[posy][posx].n;
+			exit[e2] = maze[posy][posx].s;
+
+			while (maze[posy][posx].e && wall < 3) 
+			{
+				posx++;
+
+				if (posx < MAZE_SIZE_X) 
+				{
+					wall++;
+
+					if (wall < 3) 
+					{
+						maze[posy][posx].visited = true; // Mark location as visited as we can see it, so we know the hall layout
+						e1 += 2;
+						e2 += 2;
+						exit[e1] = maze[posy][posx].n;
+						exit[e2] = maze[posy][posx].s;
+					}
 				}
 			}
-		}
-		break;
-	case SOUTH:
-		exit[e1] = maze[posy][posx].e;
-		exit[e2] = maze[posy][posx].w;
-		while (maze[posy][posx].s && wall < 3) {
-			posy++;
-			if (posy < MAZE_SIZE_Y) {
-				wall++;
-				if (wall < 3) {
-					maze[posy][posx].visited = 1; // Mark location as visited as we can see it, so we know the hall layout
-					e1 += 2;
-					e2 += 2;
-					exit[e1] = maze[posy][posx].e;
-					exit[e2] = maze[posy][posx].w;
+			break;
+
+		case SOUTH:
+			exit[e1] = maze[posy][posx].e;
+			exit[e2] = maze[posy][posx].w;
+
+			while (maze[posy][posx].s && wall < 3) 
+			{
+				posy++;
+
+				if (posy < MAZE_SIZE_Y) 
+				{
+					wall++;
+
+					if (wall < 3) 
+					{
+						maze[posy][posx].visited = true; // Mark location as visited as we can see it, so we know the hall layout
+						e1 += 2;
+						e2 += 2;
+						exit[e1] = maze[posy][posx].e;
+						exit[e2] = maze[posy][posx].w;
+					}
 				}
 			}
-		}
-		break;
-	case WEST:
-		exit[e1] = maze[posy][posx].s;
-		exit[e2] = maze[posy][posx].n;
-		while (maze[posy][posx].w && wall < 3) {
-			posx--;
-			if (posx >= 0) {
-				wall++;
-				if (wall < 3) {
-					maze[posy][posx].visited = 1; // Mark location as visited as we can see it, so we know the hall layout
-					e1 += 2;
-					e2 += 2;
-					exit[e1] = maze[posy][posx].s;
-					exit[e2] = maze[posy][posx].n;
+			break;
+		case WEST:
+			exit[e1] = maze[posy][posx].s;
+			exit[e2] = maze[posy][posx].n;
+
+			while (maze[posy][posx].w && wall < 3) 
+			{
+				posx--;
+
+				if (posx >= 0) 
+				{
+					wall++;
+
+					if (wall < 3) 
+					{
+						maze[posy][posx].visited = true; // Mark location as visited as we can see it, so we know the hall layout
+						e1 += 2;
+						e2 += 2;
+						exit[e1] = maze[posy][posx].s;
+						exit[e2] = maze[posy][posx].n;
+					}
 				}
 			}
-		}
-		break;
+			break;
 	}
 
 	// This is out BASE hall image.  We alter it after this with replace() commands to add in lines
@@ -402,7 +435,8 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 				   // ANSI to move cursor to home (upper left corner) is "\e[H".
 
 	// Now that we altered our hall, we can draw the entire thing
-	for (int i = 0; i < 23; i++) cout << hall3D[i] << endl;
+	for (int i = 0; i < 23; i++) 
+		cout << hall3D[i] << endl;
 }
 
 
@@ -420,7 +454,7 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 	// Location struct
 	struct Location 
 	{
-		int x, y;
+		_int8 x, y;
 	};
 	
 	// Set our starting location to center of map.
@@ -431,19 +465,19 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 
 	// We'll loop as long as there is a valid location to visit in the history stack
 	do {
-		maze[loc.y][loc.x].visited = 1;
+		maze[loc.y][loc.x].visited = true;
 		vector<char> check;
 
-		if (loc.x > 0 && maze[loc.y][loc.x - 1].visited == 0)
+		if (loc.x > 0 && maze[loc.y][loc.x - 1].visited == false)
 			check.push_back('W'); // Check west exit.
 
-		if (loc.y > 0 && maze[loc.y - 1][loc.x].visited == 0)
+		if (loc.y > 0 && maze[loc.y - 1][loc.x].visited == false)
 			check.push_back('N'); // Check north exit.
 
-		if (loc.x < (MAZE_SIZE_X - 1) && maze[loc.y][loc.x + 1].visited == 0)
+		if (loc.x < (MAZE_SIZE_X - 1) && maze[loc.y][loc.x + 1].visited == false)
 			check.push_back('E'); // Check east exit.
 
-		if (loc.y < (MAZE_SIZE_Y - 1) && maze[loc.y + 1][loc.x].visited == 0)
+		if (loc.y < (MAZE_SIZE_Y - 1) && maze[loc.y + 1][loc.x].visited == false)
 			check.push_back('S'); // Check south exit.
 
 		// If there were unvisited exits available
@@ -455,27 +489,27 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 			switch (moveDirection) 
 			{
 				case 'W':
-					maze[loc.y][loc.x].w = 1;  // Mark west path open
-					loc.x--;                   // move west one cell
-					maze[loc.y][loc.x].e = 1;  // mark east path of new cell open
+					maze[loc.y][loc.x].w = true;		// Mark west path open
+					loc.x--;						// move west one cell
+					maze[loc.y][loc.x].e = true;	// mark east path of new cell open
 					break;
 
 				case 'N':
-					maze[loc.y][loc.x].n = 1;  // Mark north path open
-					loc.y--;                   // move north one cell
-					maze[loc.y][loc.x].s = 1;  // mark south path of new cell open
+					maze[loc.y][loc.x].n = true;	// Mark north path open
+					loc.y--;						// move north one cell
+					maze[loc.y][loc.x].s = true;	// mark south path of new cell open
 					break;
 
 				case 'E':
-					maze[loc.y][loc.x].e = 1;  // Mark east path open
-					loc.x++;                   // move east one cell
-					maze[loc.y][loc.x].w = 1;  // mark west path of new cell open
+					maze[loc.y][loc.x].e = true;	// Mark east path open
+					loc.x++;						// move east one cell
+					maze[loc.y][loc.x].w = true;	// mark west path of new cell open
 					break;
 
 				case 'S':
-					maze[loc.y][loc.x].s = 1;  // Mark south path open
-					loc.y++;                   // move south one cell
-					maze[loc.y][loc.x].n = 1;  // mark north path of new cell open
+					maze[loc.y][loc.x].s = true;	// Mark south path open
+					loc.y++;						// move south one cell
+					maze[loc.y][loc.x].n = true;	// mark north path of new cell open
 			}
 		}
 		else 
@@ -490,13 +524,13 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 
 	// Open the walls at the start and finish
 	// Entrance is at top left, exit is bottom right
-	maze[0][0].isEntrance = 1;
-	maze[MAZE_SIZE_Y - 1][MAZE_SIZE_X - 1].isExit = 1;
+	maze[0][0].isEntrance = true;
+	maze[MAZE_SIZE_Y - 1][MAZE_SIZE_X - 1].isExit = true;
 
 	// Reset visited flag so we can use it to draw our map
-	for (int y = 0; y < MAZE_SIZE_Y; y++)
-		for (int x = 0; x < MAZE_SIZE_X; x++)
-			maze[y][x].visited = 0;
+	for (_int8 y = 0; y < MAZE_SIZE_Y; y++)
+		for (_int8 x = 0; x < MAZE_SIZE_X; x++)
+			maze[y][x].visited = false;
 
 	// Set player starting position 
 	player.x = 0;
@@ -518,11 +552,11 @@ void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 {
 	system("cls"); // *WIN32*
 
-	for (int y = 0; y < MAZE_SIZE_Y; y++) 
+	for (_int8 y = 0; y < MAZE_SIZE_Y; y++) 
 	{
-		for (int r = 0; r < 2; r++) 
+		for (_int8 r = 0; r < 2; r++) 
 		{
-			for (int x = 0; x < MAZE_SIZE_X; x++) 
+			for (_int8 x = 0; x < MAZE_SIZE_X; x++) 
 			{
 				char playerDirectionIndicator = ' ';
 
@@ -610,7 +644,7 @@ void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 		}
 	}
 
-	for (int x = 0; x < MAZE_SIZE_X; x++) 
+	for (_int8 x = 0; x < MAZE_SIZE_X; x++) 
 		cout << "+-";
 
 	cout << '+';
