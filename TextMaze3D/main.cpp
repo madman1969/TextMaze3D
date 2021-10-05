@@ -170,7 +170,11 @@ int main(int arc, char** argv)
 	return 0;
 }
 
-
+/// <summary>
+/// Draw the maze view from the players perspective
+/// </summary>
+/// <param name="maze"></param>
+/// <param name="player"></param>
 void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 {
 	int wall = 0;
@@ -288,33 +292,41 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 	   R"( +-----------------------------------------+)"
 	};
 
-	switch (wall) {
-	case 0:  // Closest wall
-	   // erase the middle and end parts of the hall
-		for (int i = 4; i <= 17; i++) hall3D[i].replace(9, 27, "                           ");
-		// and draw a line near the floor, close up to form a close wall
-		hall3D[18].replace(9, 27, "___________________________");
-		break;
-	case 1:  // Middle wall
-	   // like the close wall, only we just erase the far end section.
-		for (int i = 7; i <= 14; i++) hall3D[i].replace(15, 15, "               ");
-		// we draw a line on the floor at the end of the middle to complete a wall.
-		hall3D[15].replace(15, 15, "_______________");
-		break;
-	case 2:  // Far wall
-	   // Erase  the very last little bit at the very end of the hall
-		for (int i = 9; i <= 12; i++) hall3D[i].replace(19, 7, "       ");
-		// and draw a line on the floor to indicate a wall at the end
-		hall3D[13].replace(19, 7, "_______");
-		break;
-	default: // Wall 3+ away are out of sight, don't draw them.
-		break;
+	switch (wall) 
+	{
+		// Closest wall
+		case 0:  
+		   // erase the middle and end parts of the hall
+			for (int i = 4; i <= 17; i++) hall3D[i].replace(9, 27, "                           ");
+			// and draw a line near the floor, close up to form a close wall
+			hall3D[18].replace(9, 27, "___________________________");
+			break;
+
+		// Middle wall
+		case 1:  
+		   // like the close wall, only we just erase the far end section.
+			for (int i = 7; i <= 14; i++) hall3D[i].replace(15, 15, "               ");
+			// we draw a line on the floor at the end of the middle to complete a wall.
+			hall3D[15].replace(15, 15, "_______________");
+			break;
+
+		// Far wall
+		case 2:  
+		   // Erase  the very last little bit at the very end of the hall
+			for (int i = 9; i <= 12; i++) hall3D[i].replace(19, 7, "       ");
+			// and draw a line on the floor to indicate a wall at the end
+			hall3D[13].replace(19, 7, "_______");
+			break;
+		default: // Wall 3+ away are out of sight, don't draw them.
+			break;
 	}
 
 	// This is all the side halls, from the closest to the fathest,
 	// we draw in wall lines for each hall and erase the angles lines near the floor.
+	
 	// Left close exit
-	if (exit[0]) {
+	if (exit[0]) 
+	{
 		hall3D[3].replace(2, 5, "_____");
 		hall3D[18].replace(2, 6, "______");
 		hall3D[19].replace(6, 2, "  ");
@@ -323,7 +335,8 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 	}
 
 	// Right close exit
-	if (exit[1]) {
+	if (exit[1]) 
+	{
 		hall3D[3].replace(38, 5, "_____");
 		hall3D[18].replace(37, 6, "______");
 		hall3D[19].replace(37, 2, "  ");
@@ -332,18 +345,25 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 	}
 
 
-	if (wall > 0) {
+	if (wall > 0) 
+	{
 		// Left middle exit
-		if (exit[2]) {
-			for (int i = 5; i <= 17; i++) hall3D[i].replace(9, 1, "|");
+		if (exit[2]) 
+		{
+			for (int i = 5; i <= 17; i++) 
+				hall3D[i].replace(9, 1, "|");
+
 			hall3D[6].replace(10, 3, "___");
 			hall3D[15].replace(10, 4, "____");
 			hall3D[16].replace(12, 2, "  ");
 			hall3D[17].replace(10, 2, "  ");
 		}
 		// Right middle exit
-		if (exit[3]) {
-			for (int i = 5; i <= 17; i++) hall3D[i].replace(35, 1, "|");
+		if (exit[3]) 
+		{
+			for (int i = 5; i <= 17; i++) 
+				hall3D[i].replace(35, 1, "|");
+
 			hall3D[6].replace(32, 3, "___");
 			hall3D[15].replace(31, 4, "____");
 			hall3D[16].replace(31, 2, "  ");
@@ -351,17 +371,25 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 		}
 	}
 
-	if (wall > 1) {
+	if (wall > 1) 
+	{
 		// Left far exit
-		if (exit[4]) {
-			for (int i = 8; i <= 14; i++) hall3D[i].replace(15, 1, "|");
+		if (exit[4]) 
+		{
+			for (int i = 8; i <= 14; i++) 
+				hall3D[i].replace(15, 1, "|");
+
 			hall3D[8].replace(16, 1, "_");
 			hall3D[13].replace(16, 2, "__");
 			hall3D[14].replace(16, 2, "  ");
 		}
+
 		// Right far exit
-		if (exit[5]) {
-			for (int i = 8; i <= 14; i++) hall3D[i].replace(29, 1, "|");
+		if (exit[5]) 
+		{
+			for (int i = 8; i <= 14; i++) 
+				hall3D[i].replace(29, 1, "|");
+
 			hall3D[8].replace(28, 1, "_");
 			hall3D[13].replace(27, 2, "__");
 			hall3D[14].replace(27, 2, "  ");
@@ -378,6 +406,11 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 }
 
 
+/// <summary>
+/// Generates a new maze
+/// </summary>
+/// <param name="maze"></param>
+/// <param name="player"></param>
 void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 {
 	// The following code generates a maze using the depth-first search algorithm (using backtracking)
@@ -385,10 +418,13 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 	// something like "Prim's Randomized Algorithm" which produces more interesting halls.
 
 	// Location struct
-	struct Location {
+	struct Location 
+	{
 		int x, y;
 	};
-	Location loc = { MAZE_SIZE_X / 2, MAZE_SIZE_Y / 2 };   // Set our starting location to center of map.
+	
+	// Set our starting location to center of map.
+	Location loc = { MAZE_SIZE_X / 2, MAZE_SIZE_Y / 2 };   
 
 	// We'll store a history of visited locations with unvisited paths here
 	vector<Location> history;
@@ -453,6 +489,7 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 	} while (history.size());  // Continue until we have no more locations to visit (back at the start)
 
 	// Open the walls at the start and finish
+	// Entrance is at top left, exit is bottom right
 	maze[0][0].isEntrance = 1;
 	maze[MAZE_SIZE_Y - 1][MAZE_SIZE_X - 1].isExit = 1;
 
@@ -461,17 +498,22 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 		for (int x = 0; x < MAZE_SIZE_X; x++)
 			maze[y][x].visited = 0;
 
-	// Set player starting position and direction
+	// Set player starting position 
 	player.x = 0;
 	player.y = 0;
 
+	// If exist to east set player direction to east, or else south ...
 	if (maze[0][0].e) 
 		player.dir = EAST;
 	else 
 		player.dir = SOUTH;
 }
 
-
+/// <summary>
+/// Draws an overhead 2D rendering of the explored map
+/// </summary>
+/// <param name="maze"></param>
+/// <param name="player"></param>
 void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 {
 	system("cls"); // *WIN32*
@@ -482,7 +524,7 @@ void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 		{
 			for (int x = 0; x < MAZE_SIZE_X; x++) 
 			{
-				char mark = ' ';
+				char playerDirectionIndicator = ' ';
 
 				if (player.y == y && player.x == x) 
 				{
@@ -490,23 +532,24 @@ void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 					switch (player.dir) 
 					{
 						case NORTH:
-							mark = '^';
+							playerDirectionIndicator = '^';
 							break;
 
 						case EAST:
-							mark = '>';
+							playerDirectionIndicator = '>';
 							break;
 
 						case SOUTH:
-							mark = 'V';
+							playerDirectionIndicator = 'V';
 							break;
 
 						case WEST:
-							mark = '<';
+							playerDirectionIndicator = '<';
 					}
 				}
 
 				char N1 = ' ', N2 = ' ';
+
 				switch (r) 
 				{
 					case 0:
@@ -516,39 +559,45 @@ void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 							if (maze[y][x].visited || maze[y][x - 1].visited) 
 								N1 = '+';
 
-							if (y) {
-								if (maze[y - 1][x].visited || maze[y - 1][x - 1].visited) N1 = '+';
+							if (y) 
+							{
+								if (maze[y - 1][x].visited || maze[y - 1][x - 1].visited) 
+									N1 = '+';
 							}
 						}
 						else 
 							N1 = '+';
 
-						if (y) {
+						if (y) 
+						{
 							if (maze[y][x].visited && !maze[y][x].n) 
 								N2 = '-';
 
 							if (maze[y - 1][x].visited && !maze[y - 1][x].s) 
 								N2 = '-';
 						}
-						else {
+						else 
+						{
 							N1 = '+';
 							N2 = '-';
 						}
 						cout << N1 << N2;
+
 						break;
 
 					case 1:
 						// West
-						if (x > 0) {
+						if (x > 0) 
+						{
 							if (!maze[y][x].w && maze[y][x].visited) 
-								cout << '|' << mark;
+								cout << '|' << playerDirectionIndicator;
 							else if (!maze[y][x - 1].e && maze[y][x - 1].visited) 
-								cout << '|' << mark;
+								cout << '|' << playerDirectionIndicator;
 							else 
-								cout << ' ' << mark;
+								cout << ' ' << playerDirectionIndicator;
 						}
 						else 
-							cout << '|' << mark;
+							cout << '|' << playerDirectionIndicator;
 
 						break;
 				}
@@ -560,6 +609,9 @@ void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 				cout << "+\n";
 		}
 	}
-	for (int x = 0; x < MAZE_SIZE_X; x++) cout << "+-";
+
+	for (int x = 0; x < MAZE_SIZE_X; x++) 
+		cout << "+-";
+
 	cout << '+';
 }
