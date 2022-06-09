@@ -16,42 +16,7 @@
  * I am releasing this code for educational purposes (if you think you can learn from my code that is).
  */
 
-#include <iostream>
-#include <string>
-#include <ctime>
-#include <random>
-#include <conio.h> // *WIN32*
-
-#define MAZE_SIZE_X 20
-#define MAZE_SIZE_Y 11
-#define NORTH  0
-#define EAST   1
-#define SOUTH  2
-#define WEST   3
-
-#define ESC_KEY 27
-#define RIGHT_ARROW_KEY 77
-#define LEFT_ARROW_KEY  75
-#define UP_ARROW_KEY 72
-#define DOWN_ARROW_KEY 80
-
-using namespace std;
-
-struct Player {
-	_int8 x, y;   // Location in the maze
-	_int8 dir;    // direction player is facing (North, South, East or West)
-};
-
-struct Maze {
-	bool n, s, e, w;   // The four exits from each room, set to 1 if there is an exit in that direction, 0 if not.
-	bool isEntrance;   // is this the entrance to the maze (not used yet, I may change this to an external variable)
-	bool isExit;       // is this the exit to the maze (not used yet, I may change this to an external variable)
-	bool visited;      // This is used when the maze is generated, and whether the player has been here when drawing the map
-};
-
-void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player);
-void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player);
-void drawMap(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player);
+#include "main.h"
 
 /// <summary>
 /// The main application
@@ -71,22 +36,27 @@ int main(int arc, char** argv)
 	player.y = 0;
 	player.dir = EAST;
 
+	// Generate the maze ...
 	generateMaze(maze, player);
 
 	// Loop until ESC key (#27) is pressed
 	while (command != ESC_KEY) 
 	{    
+		// Draw maze view from players perspective ...
 		drawHall(maze, player);
+
+		// Display player command prompt and await input ...
 		cout << " COMMAND > ";
 		command = _getch();  // *WIN32* unbuffered input, non-windows machines may have to change this
 
+		// Validate input before outputing ...
 		// Characters 32 (space) to 127 are normal, printable ASCII characters
 		if (command > 32 && command < 127) 
 			cout << command << endl;
 
 		// When a special key, like a cursor key is pressed, two characters are sent,
 		// first a zero or 224 to indicate a special command follows.
-		// Then the code for teh command.  So if the first character you get is zero or
+		// Then the code for the command.  So if the first character you get is zero or
 		// 224, than you immediately do another _getch() to get the next character which will
 		// be waiting to be retrieved.  You can then act on it as you will see below.
 
@@ -197,9 +167,9 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 	maze[player.y][player.x].visited = true;  // Mark current location visited
 
 	// TODO: The code below looks repetative, I need to improve it.
-
 	switch (player.dir) 
 	{
+		// Looking North ...
 		case NORTH:
 			exit[e1] = maze[posy][posx].w;
 			exit[e2] = maze[posy][posx].e;
@@ -224,6 +194,7 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 			}
 			break;
 
+		// Looking East ... 
 		case EAST:
 			exit[e1] = maze[posy][posx].n;
 			exit[e2] = maze[posy][posx].s;
@@ -248,6 +219,7 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 			}
 			break;
 
+		// Looking South ...
 		case SOUTH:
 			exit[e1] = maze[posy][posx].e;
 			exit[e2] = maze[posy][posx].w;
@@ -271,6 +243,8 @@ void drawHall(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], const Player& player)
 				}
 			}
 			break;
+
+		// Looking West ...
 		case WEST:
 			exit[e1] = maze[posy][posx].s;
 			exit[e2] = maze[posy][posx].n;
@@ -463,6 +437,8 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 	// We'll store a history of visited locations with unvisited paths here
 	vector<Location> history;
 
+	int max_hist = (int)history.size();
+
 	// We'll loop as long as there is a valid location to visit in the history stack
 	do {
 		maze[loc.y][loc.x].visited = true;
@@ -483,6 +459,9 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 		// If there were unvisited exits available
 		if (check.size()) 
 		{   
+			/*if (history.size() > max_hist)
+				max_hist = history.size();*/
+
 			history.push_back(loc); // add the current location to the history stack
 			char moveDirection = check[rand() % check.size()]; // Randomly pick one of the available directions
 
@@ -520,6 +499,7 @@ void generateMaze(Maze maze[MAZE_SIZE_Y][MAZE_SIZE_X], Player& player)
 			loc.y = history.back().y;  // Grab the last y co-ordinate off the history stack
 			history.pop_back();        // Remove the last co-ordinate off the history stack (dead end)
 		}
+
 	} while (history.size());  // Continue until we have no more locations to visit (back at the start)
 
 	// Open the walls at the start and finish
